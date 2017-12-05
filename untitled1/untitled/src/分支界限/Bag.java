@@ -3,7 +3,7 @@ package 分支界限;
 import java.util.PriorityQueue;
 
 /**
- * Created by Administrator on 2017/12/5 0005.
+ * Created by wsl on 2017/12/5 0005.
  */
 /*
 本代码实现了运用优先队列分支界限算法解决了01背包问题，解决问题的大致是思想和回溯2算法大致相同去，都属于搜索算法
