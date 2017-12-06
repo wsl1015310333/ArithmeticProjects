@@ -38,11 +38,77 @@ mDataSetObservable.norifyChanged()
 我们看看mDataSetObserver.norifyChanged()函数中看
 public class DataSetObservable extends Observable<DataSetObserver>{
 public void notifyChanged(){
-synchronized
+synchronized（mObservers）{
+for (int i=mObservers.size()-1,i>=0;i++){
+mObservers.get(i).onChanged();
 }
 }
+}
+}
+这个代码很简单，就是砸死mDatasetObservable.norifyChanged中遍历所有的观察者
+并调用他们车onchanged方法，从而告知观察者发生了变化
 
- */
+   那些观察者是从哪里来的呢， 其实这些贯彻着就是listview通过setAdapter方法设置
+   Adapter产生的
+   public void setAdapterI(ListAdapter adapter){
+   if(mAdapter!=null&&mDSataSetObserver!=null({
+   mAdapter.unregisterDataSetOBserver(mDataSetObserver)
+   }
+   super.setAdapter(adapter)
+   if(mAdapter!=null){
+   mAreAllItemSelectable=mAdapter.areAllItemsEnabled();
+   mOldItemCoutn=mItemCount();
+   mItemCount=mAdaspter.getCount();
+   checkFDorcus();
+   mDataSetObserver=new AdapterDataSetObserver();
+   mAdapter.registerDataSetObserver(mDataSetObserver);
+   }
+   else{
+   ...
+   }
+   }
+    从程序中可以看到，在设置Adapter时会创建一个AdapterDataSetObserver，这就是上面所说是的观察者，
+    最后将这个观察者注册到Adapter中，这样我们的观察者】被观察者都有了，
+    AdapterDataSetObserver是什么？他是如何运作的，
+    AdatperDatasetObserver，AdatpterDataSetObsedr定义在LIstview的父类AbsListVIew中，
+    class AdapterDataSetObsedrver extends AdapterVIew（ListVIew）.AdapterDataSetObser{
+    public void onCHanged(){
+    super.onChanged();
+    if(mFastScroller!=null){
+    mFastScroller.onSectionsChanged();
+    }
+    }
+    public void onInvalidated(){
+    super.onInvalidated();
+    if(mFasScroller!=null){
+    mFastScroller.onSectionsChanged();
+    }
+    }
+    }
+     它又继承了AbsListVIew的父类，AdapterVIew的AdapterDataSetObserver
+     class jkAdatperDataSetObserver extends DataSetObsedrver{
+     private Parcelable mInstanceState=null;
+     public void on Changed(){
+     mDataChanged=true;
+     mOldItemCount=mIntemCount;
+     mItemCount=getAdapte()-getCount();
+     if(AdapteView.this.getAdapte().hasStableIds)(&&mInstanceState!=nullAdaterView.this.onRestoreInstanceState(mInstanceState)；
+     mInstanceState=null;
+     }else{
+     rememberSyncState();
+     }
+     checkForcus();
+     reqauestLayout();
+     }
+     public void clearSavedState(){
+     mInstanceState=null;
+     }
+     到这里我们就知道了，当listeview数据变化的时候，调用Adapte的notifyDataSetChanged函数，
+     这个函数会调用DataSetObservable的norifyChanged函数，这个函数会调用所有观察者AdapteDataSetObservable
+     的onchanged方法，1在onchanged函数中又会调用Listviedw重新布局的函数使得Lisetview刷新界面，
+     这既是一个观察者模式
+
+      */
 
 public class ObservableText {
         public static void main(String args[]) {
