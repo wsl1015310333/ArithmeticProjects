@@ -23,7 +23,11 @@ import java.util.Random;
 
 Android 源码中
 在现阶段Android开发中，注解越来越流行起来，按照处理时期，注解又可以分为两种类型
-一种运行时期注解，另一种编译期注解，
+一种运行时期注解，另一种编译期注解，,运行时注解由于性能问题，编程注解的核心原理依赖APT实现，例如，著名的ButterKnife、Dagger、Retrofit等开源库都是基于Apt，
+那么编译器注解是如何工作的
+   编译时Anonotatiion结息的基本原理是，在某些代码上（如类型，函数，字段等）添加注解，在编译时编译器会检查AbstracProcessor的子类，并且调用该类型的process函数
+   ，然后添加注解的所有元素都传递到process函数中，使得开发人员可以在编译器进行相应的处理，例如，根据注解生成的新的java类，这也就是butterknife等呢过开源的基本原里
+
  */
 public class VisitorTest {
     public static void main(String []args){
