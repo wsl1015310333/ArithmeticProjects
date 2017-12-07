@@ -27,7 +27,44 @@ Android 源码中
 那么编译器注解是如何工作的
    编译时Anonotatiion结息的基本原理是，在某些代码上（如类型，函数，字段等）添加注解，在编译时编译器会检查AbstracProcessor的子类，并且调用该类型的process函数
    ，然后添加注解的所有元素都传递到process函数中，使得开发人员可以在编译器进行相应的处理，例如，根据注解生成的新的java类，这也就是butterknife等呢过开源的基本原里
-
+   对于编译器来说，代码中的元素结构不变的，例如，组成代码的基本元素有包、类、函数、字段、类型参数、变量。JDK中的为了这些元素定义了一个基类，也就是Element类，
+  packageElement----包元素，包含了某个包下的信息，可以获取到包名等
+  TypeELement---类型元素，如某个字段属于某种类型
+  ExecutableElement---可执行元素，代表了函数类型的元素
+  VariableElement----变量元素
+  TypeParameterElement----类型参数元素
+    因为注解可以指定作用在哪些元素上，因此，通过上述的抽象类对应这些元素
+     @Target(element.type)
+     @Retention(RetentionPolicy.Class)
+     @interface Test{
+     String value();
+     }
+     该注解只能作用于函数类型，因此，它对应的元素类型就是ExecutableElement，当我们想通过APT处理
+     这个注解时就可以获取目标对象的Text注解，并且将所有这些元素转换为ExecutableElemenmt元素，
+     以便获取到他们的对应信息
+     public interface element{
+     //代码省略
+     //获取元素类型
+     ElementKind getKind(){
+     }
+     //获取修饰符，如public、static、final 等
+     Set<Modifier>getModifiers();
+     <R,P> R accept<ElementVisitor<R,P>v,p,p);
+     }
+         我们看到Element定义了一代吗元素的一些通用接口，其中很显眼的就是accept函数，这个函数接受一个ElementVisitor和类型为P的参数，
+         ElementVisitor就是访问者类型，而P则用于传递一些额外的从参数给Visitor，到这里读者应该明白访问者模式了
+         public interface ElementVisitor<R,P>
+         {
+         R visit(Element e,P p);
+         R visitPackage(PackageElement e,P p)
+         R visitVariable(VariableElement e,P p)
+         R visitExecutable<ExecutableElement e,P p)
+         R visitTypePatameter(TypeParameterElement e,P p)
+         R visitUnmknown(Element e,P p)
+         }
+            在 ElementVisitor中定义了多个visit接口，每个接口处理一种元素类型，这就是典型的访问者模式
+            我们知道，一个类型元素和函数元素都是完成不一样的，他们的结构不一样，因此，编译器对他们的操作肯定不一样
+            
  */
 public class VisitorTest {
     public static void main(String []args){
