@@ -36,6 +36,14 @@ package 设计模式;
          我们知道，在androiud系统启动时，第一个启动起来的进程就是zygore进程，然后由zygote启动systemServer，在后就是
          启动ActivitymanageServer、WindowsMangerService 等系统核心服务与进程之外
          普通的用户进程也是由zygote进程fork而来的，当一个应用进程启动
+         后，就会加载用户的AndroidManifest.xml中配置的默认加载Activity，此时加载入口是ActivityThread.main（String []args)方法，
+         这个方法就是类似C语言中的main方法，是整个应用的入口
+         在ActivityThrad.main(Stringp[]args)方法中，主要是功能就是创建Application和Activity，并且调用Activity的一些生命周期函数，
+         如OnCreate、onResume等
+         从上述程序可以看到，在ActivityiThread.main中主要是的功能就是创建了UI线程消息循环，并且启动了消息循环，最重要是创建
+         ActivityThread，并调用了attach方法，在attach方法中又调用了 ActivityManagerServie进行交互，在了解attachApplication之前
+         我们看看ApplicationTHreawd和ActivityTHraada的关联
+
  */
 public class AbsTemplate {
     public  static  void main(String []args){
