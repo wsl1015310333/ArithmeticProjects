@@ -107,8 +107,91 @@ mObservers.get(i).onChanged();
      这个函数会调用DataSetObservable的norifyChanged函数，这个函数会调用所有观察者AdapteDataSetObservable
      的onchanged方法，1在onchanged函数中又会调用Listviedw重新布局的函数使得Lisetview刷新界面，
      这既是一个观察者模式
+  AdapteVIew中有一个内部类AdapteDataSetObservable，在listview中设置Adapte时会创建一个AdapteDataSetObserver，并且
+  注册到Adapte中，这就是一个观察者，erAdapte中包含一个数据集可观察者DataSetObservable，在数据集发生变更时，开发者手动调用
+  Adapter.norifyDataSetChanged ,而notifyDataSetChanged实际上会调用AdapteDataSetOsedrver的onChanged函数怒，该函数会遍历所有的观察者，onChanged函数，在Adapte
+  DataSetObser的onchanged函数中获取Adapte中数据记得新数量
 
+  BroadCastReceiver他作为应用内，进程间的一种重要通信手段，能够将某个消息通过广播形式传递给他的注册的对应广播接收器的对象，
+  接受对象需要通过context的registerReceiver函数注册到Ams中，当通过sendBroadCast发送广播时，所有注册了对应的IntentFilter的
+  BroadCastReceiver对象就会接收到这个消息，BroadCastReceiver的onreceive方法就会被调用
+
+     我们发现registerReceiver函数并不是在Activity中实现，因此，我们把目标移到Activity父类ContextWrapper
+     resisterReceiver函数中
+     public class ContextWrapper extends Context{
+     Context mBase;
+     public Intent registerReceiver{{
+     BroadCasttReceiver receiver,intentFilter filter){
+     return mBase.registerReceiver(receiver,filter)
+     }
+     }
+     }
+     这里的成员变量吗mBase，我们讲过这个mBase对象是一个ContextImpl类的实例
+     继续转移到COntextImpl的ergisterreceiver函数
+
+     class ContextImpl extends Context{
+     publci intent regiterReceiver(broadcastreceiver receiver,IntentFilter filter){
+     return registerReceiver(receiver ,filter,null,null)；
+     }
+     publci Intent registerReceiver(BroadCastReceiver receiver,IntentFIlter filter,String broadCastPermission
+     Handler sceduler){
+     return registerReceiverInternal(receiver ,filter,broadcastPermission,schedulter,getOuterContext());
+     }
+     private Intent registerRecevierIntentnal(BroadCastRecevier receiver,IntentFIlter filter,String broadCastPerssion,Handler scheduler
+     ,Context context){
+     IIntentReceiver rd=null;
+     if(receiver!=null){
+    if(mPackageInfo!=null&&context!=null)
+    {
+    if(scheduler==null){
+    scheduler=mMaintHREAD.mMainTHread.getHanler();//获取Handler来投递的消息
+    }
+    //获取IItenteReceiver对象，通过他与AMS交互，并且通过Handler传递消息
+    rd =mPackagedInfo.getReceiverDisaptcher(receiver,context,scheduler,mMainThread.getInstrumentation(),true);
+    }else{
+
+    }
+     }
+     try{
+     //调用ActivitMangerNative的RegisterRecever
+     return ActivityM<anagerNative.getDefault().registerReceiver(
+     mmainThread.getApplicationTHread(),rd,filter,broadCastPermission);
+     }
+     }
+     }
+     注册广播接收器的函数调用的最终进入到了ContextImpl的registerReceiver这个函数，
+     这个里面的成员变量，吗，PackAgeInfo是一个LoaderAPK实例，它是用来负责处理广播的接收，
+     参数broadCastpermssion和scheduler都是为null，而参数context是上面的的函数通过调用函数getOuterContext得到
+     这里他指向的是MainActivyt
+       由于条件mPageInfo！=null和context！=null都成立
+       ，而且条件scheduler==null也成立，于是就调用mMainThread.getHandler来获取到一个Handler
+       这个handler是用来分发ActivityManagerService发送过的广播
+       这里的成员变量mMainThread是一个ActivityThrad实例，我们先来看看，
+       ActivityThread.getHandler函数的实现，然后再回头过来继续分析ContextImpl.registerReceiverInternal函数
+       public final classs ActivityThread{{
+       final H mH=new H();
+       private final class H extends Handler{
+       public void handlerMessage(Message msg){
+       switch(msg.what)
+       {
+       }
+       }
+       final Handler getHandler(){
+       return mH;
+       }
+       }
+       }
+       有了这个Handler之后，就可以分析消息给应用程序处理了，
+       在回到上一步ContextImpl.registerReceiverInternal函数中，他通过mPackageInfo.getReceiverDispatevher函数获取到一个IIntentReceiver
+       接口对象rd，zheshiyigeBinder对象，接下来会把它传递到ActivityManagerSErviece，Activity《MangerServiec在收到相应的广播时
+       就通过这个人Binder对象来通知MainActiviyt来接收我们看看mPackageinfo.getReiverDispatcher函数实现
+       final class LoaderAPk{
+       public IIntentReciever getReceiverDispatcher(Broadcasrecie r,Context context,Handler handler,Instrumentation,boolean registreerd
+      )
+      yy
+       }
       */
+
 
 public class ObservableText {
         public static void main(String args[]) {

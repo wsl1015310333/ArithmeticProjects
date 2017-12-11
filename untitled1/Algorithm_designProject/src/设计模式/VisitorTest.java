@@ -64,7 +64,7 @@ Android 源码中
          }
             在 ElementVisitor中定义了多个visit接口，每个接口处理一种元素类型，这就是典型的访问者模式
             我们知道，一个类型元素和函数元素都是完成不一样的，他们的结构不一样，因此，编译器对他们的操作肯定不一样
-            
+            ·
  */
 public class VisitorTest {
     public static void main(String []args){
