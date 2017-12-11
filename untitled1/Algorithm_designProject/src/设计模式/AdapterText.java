@@ -41,6 +41,11 @@ class VoltAdapter extends Volt220 implements FiveVolt{
 这样只要用户实现了Adapter接口，并且将该Adapter设置给ListVIew，ListVIew就可以按照用户设定的UI效果、数量、数据来显示每一项数据，ListView
 最重要的问题就是要解决每一项Item视图的的输出，ItemtVIew千变万化，但终究它都是View类型，Adapte统一将ItemtView输出为VIew，这样很好
 对应了Itemt VIew
+那么ListView是如何通过Adapter相关的成员变量 ，其中Adapter在listrview的父类AbsListVIew中，AbsListView是一个列表控件的抽象
+public abstract class AbsListview extends Adapter<LiistAdapter> implments TextWatcher,ViewTreeObserver.OnGlobalLayoutListener,FIlter.FIlter
+Listener
+
+
  */
 
 
