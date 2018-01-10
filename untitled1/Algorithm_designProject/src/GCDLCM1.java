@@ -8,6 +8,7 @@ public class GCDLCM1 {
         int a,b;
         Scanner scanner=new Scanner(System.in);
         a=scanner.nextInt();
+
         b=scanner.nextInt();
         System.out.println("最大公约数"+GCD(a,b));
         System.out.println("最小公约数"+lcm(a,b));
