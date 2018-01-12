@@ -12,6 +12,7 @@ public class GetFileName
         File file = new File(path);
         String [] fileName = file.list();
         return fileName;
+
     }
     public static void getAllFileName(String path,ArrayList<String> fileName)
     {
