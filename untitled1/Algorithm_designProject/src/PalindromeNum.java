@@ -9,6 +9,8 @@ public class PalindromeNum {
         int []p=new int [1000];
         for(i=10;i<1000;i++){
         p[i]=i;
+
+
             if(i<100){
                 a=i%10;
                 b=i/10;
